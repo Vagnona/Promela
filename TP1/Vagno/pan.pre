@@ -1,0 +1,49 @@
+# 0 "Djiktra.pml"
+# 0 "<built-in>"
+# 0 "<command-line>"
+# 1 "/usr/include/stdc-predef.h" 1 3 4
+# 0 "<command-line>" 2
+# 1 "Djiktra.pml"
+
+
+
+chan sema = [0] of {bit};
+int count = 0;
+
+
+proctype dijkstra()
+{
+    do
+    :: sema!0 -> sema?1;
+    od
+}
+
+proctype user()
+{
+    do
+    :: sema?0 -> skip;
+
+
+    count = count + 1;
+
+    count = count - 1;
+    sema!1;
+    skip;
+
+    od
+}
+
+proctype monitor()
+{
+    assert(count <= 1 || count >= 0)
+}
+
+init{
+    atomic {
+        run dijkstra();
+        run user();
+        run user();
+        run user();
+        run monitor()
+    }
+}
